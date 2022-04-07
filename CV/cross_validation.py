@@ -20,7 +20,6 @@ def MSE(alpha, beta, x_test, y_test):
     for i in range(len(x_test)):
         yhat[i] = (alpha + np.matmul(beta, x_test[i].T)).min(axis=0)
 
-    # y_est = alpha + np.sum(beta * x_test, axis=1)
     mse = np.mean((y_test -  yhat)**2)
 
     return mse
