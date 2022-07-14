@@ -1,12 +1,11 @@
 import numpy as np
 import random
 
-import DGP
-import CR
 
-
-# calculate the index of training set
 def index_tr(k, i_kfold):
+    '''
+    calculate the index of training set
+    '''
     
     i_kfold_without_k = i_kfold[:k] + i_kfold[(k + 1):]
     flatlist = [item for elem in i_kfold_without_k for item in elem]
@@ -33,7 +32,6 @@ def split(x, y, ratio):
     d is the number of variables.
     '''
 
-    # the number of samples
     N = x.shape[0]
 
     # index of train and test sample
@@ -62,23 +60,21 @@ def cross_val_score(estimator, x, y, kfold, shuffle=False):
     else:
         ind = list(range(0, N))
     
-    m = len(y) // fold
+    m = len(y) // kfold
     i_kfold = [ind[i:i+m] for i in range(0, len(ind), m)]
     if len(i_kfold) > kfold:
         i_kfold[-2:] = [i_kfold[-2]+i_kfold[-1]]
 
     error = []
-    for k in range(fold):
+    for k in range(kfold):
         
         # index of training set and test set
         ind_te = i_kfold[k]
         ind_tr = index_tr(k, i_kfold)
 
-        # train predictors, train responses
         x_tr = x[ind_tr, :]  
         y_tr = y[ind_tr]   
 
-        # test predictors, test responses
         x_te = x[ind_te, :]
         y_te = y[ind_te] 
 
@@ -90,18 +86,3 @@ def cross_val_score(estimator, x, y, kfold, shuffle=False):
     cv = np.mean(np.array(error), axis=0)
 
     return cv
-
-
-
-
-
-n=50
-d=2
-sig = 2
-
-x, y, y_true = DGP.inputs(n, d, sig)
-
-# a,b,c,d = split(x, y, 0.8)
-fold = 5
-score = cross_val_score(CR.CR, x, y, fold, shuffle=False)
-print(score)
